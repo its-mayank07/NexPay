@@ -1,0 +1,35 @@
+"use server"
+
+import prisma from "@repo/db/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth";
+
+
+async function createOnrampTransaction(amount : number,provider : string) {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user || !session.user?.id) {
+        return {
+            message: "Unauthenticated request"
+        }
+    }
+    // Since we are creating a transaction, we need to ensure that the user is authenticated and has a valid session
+    const token = (Math.random()*1000).toString();
+    const userId = session.user.id;
+    await prisma.onRampTransaction.create({
+        data : {
+            userId: Number(userId),
+            amount: amount,
+            provider : provider,
+            status : "Processing",
+            token : token,
+            startTime : new Date()
+
+        }
+    });
+    return {
+        message : "Transaction added successfully"
+    }
+}
+
+export default createOnrampTransaction;
