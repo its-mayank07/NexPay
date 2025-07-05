@@ -1,23 +1,31 @@
+// app/(dashboard)/layout.tsx
+
+import { AppbarClient } from "../../components/AppbarClient";
 import { SidebarItem } from "../../components/SidebarItem";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-slate-50">
-      {/* Sidebar */}
-      <nav className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-slate-200 bg-white shadow-sm overflow-x-auto whitespace-nowrap">
-        <div className="flex flex-row lg:flex-col items-stretch gap-2 px-2 py-2 lg:py-6 lg:gap-4">
-          <SidebarItem href="/dashboard" icon={<HomeIcon />} title="Home" />
-          <SidebarItem href="/transfer" icon={<TransferIcon />} title="Transfer" />
-          <SidebarItem href="/transactions" icon={<TransactionsIcon />} title="Transactions" />
-          <SidebarItem href="/p2ptransfer" icon={<P2PTransferIcon />} title="P2P Transfer" />
-        </div>
-      </nav>
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      {/* Top Appbar */}
+      <AppbarClient />
 
-      {/* Main content */}
-      <main className="flex-1 p-3 sm:p-4 md:p-6">{children}</main>
+      {/* Sidebar + Main content */}
+      <div className="flex flex-col lg:flex-row flex-1">
+        <nav className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-slate-200 bg-white shadow-md overflow-x-auto whitespace-nowrap">
+          <div className="flex flex-row lg:flex-col items-stretch gap-2 px-2 py-2 lg:py-6 lg:gap-4">
+            <SidebarItem href="/dashboard" icon={<HomeIcon />} title="Home" />
+            <SidebarItem href="/transfer" icon={<TransferIcon />} title="Transfer" />
+            <SidebarItem href="/transactions" icon={<TransactionsIcon />} title="Transactions" />
+            <SidebarItem href="/p2ptransfer" icon={<P2PTransferIcon />} title="P2P Transfer" />
+          </div>
+        </nav>
+
+        <main className="flex-1 p-4">{children}</main>
+      </div>
     </div>
   );
 }
+
 
 function HomeIcon() {
   return (

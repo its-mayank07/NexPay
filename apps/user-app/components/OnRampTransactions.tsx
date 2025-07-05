@@ -1,4 +1,7 @@
+"use client";
+
 import { Card } from "@repo/ui/card";
+import { motion } from "framer-motion";
 
 interface Transaction {
   time: Date;
@@ -26,11 +29,14 @@ export const OnRampTransactions = ({ transactions }: OnRampTransactionsProps) =>
 
   return (
     <Card title="Deposit History">
-      <div className="pt-2">
-        {transactions.map((t) => (
-          <div
+      <div className="pt-2 max-h-[300px] overflow-y-auto space-y-2 pr-1 scroll-smooth scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
+        {transactions.map((t, index) => (
+          <motion.div
             key={t.time.toISOString()}
-            className="flex justify-between items-center mt-2 px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors"
+            initial={{ opacity: 0, translateY: 10 }}
+            animate={{ opacity: 1, translateY: 0 }}
+            transition={{ delay: index * 0.05, duration: 0.3 }}
+            className="flex justify-between items-center px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 transition-colors"
           >
             <div>
               <div className="text-sm font-medium text-slate-800">
@@ -57,7 +63,7 @@ export const OnRampTransactions = ({ transactions }: OnRampTransactionsProps) =>
                 {t.status.charAt(0).toUpperCase() + t.status.slice(1)}
               </span>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </Card>

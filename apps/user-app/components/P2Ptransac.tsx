@@ -1,6 +1,7 @@
-
+"use client";
 
 import { Card } from "@repo/ui/card";
+import { motion } from "framer-motion";
 
 interface P2PTransaction {
   time: Date;
@@ -23,13 +24,18 @@ export function P2Ptransac({ transactions }: P2PTransactionsProps) {
       </Card>
     );
   }
+
   transactions.sort((a, b) => b.time.getTime() - a.time.getTime());
+
   return (
     <Card title="Peer Transfers">
-      <div className="pt-2 space-y-3">
+      <div className="pt-2 max-h-[300px] overflow-y-auto pr-1 space-y-3 scroll-smooth scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
         {transactions.map((t, idx) => (
-          <div
+          <motion.div
             key={idx}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05, duration: 0.3 }}
             className="flex justify-between items-center bg-slate-100 hover:bg-slate-200 transition-colors rounded-lg px-4 py-3 border border-slate-200"
           >
             <div>
@@ -47,7 +53,7 @@ export function P2Ptransac({ transactions }: P2PTransactionsProps) {
             <div className="text-green-600 font-semibold text-sm">
               ₹{(t.amount / 100).toLocaleString("en-IN")}
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </Card>
