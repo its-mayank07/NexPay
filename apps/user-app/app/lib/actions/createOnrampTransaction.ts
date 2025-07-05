@@ -28,7 +28,15 @@ async function createOnrampTransaction(amount : number,provider : string) {
         }
     });
     return {
-        message : "Transaction added successfully"
+        message : "Transaction added successfully",
+        data : {
+        token : token,
+        amount : amount,
+        provider : provider,
+        status : "Processing",
+        startTime : new Date()
+        }
+
     }
 }
 

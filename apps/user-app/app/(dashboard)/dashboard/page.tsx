@@ -97,6 +97,13 @@ export default async function DashboardPage() {
                   <div>
                     <p className="text-slate-600 font-medium">{txn.provider}</p>
                     <p className="text-xs text-slate-400">{txn.time.toDateString()}</p>
+                    <p className={`text-xs ${
+                      txn.status === 'Success' ? 'text-green-500' : 
+                      txn.status === 'Failure' ? 'text-red-500' : 
+                      'text-yellow-500'
+                    }`}>
+                      {txn.status}
+                    </p>
                   </div>
                   <p className="text-green-600 font-semibold">
                     ₹{(txn.amount / 100).toLocaleString("en-IN")}

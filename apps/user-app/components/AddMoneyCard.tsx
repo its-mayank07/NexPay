@@ -59,9 +59,16 @@ export const AddMoney = () => {
                 <div style={{ display: "flex", justifyContent: "center", paddingTop: 12 }}>
                     <Button onClick={async() => {
                         if (error || amount <= 0) return;
-                        await createOnrampTransaction(amount*100,provider);
+                        const response =await createOnrampTransaction(amount*100,provider);
+                       
+                        
                         if (typeof window !== "undefined") {
-                            window.location.href = redirectUrl || "";
+                            const transactionData = {
+                                txn_id: response.data?.token,
+                                amount: response.data?.amount,
+                            };
+                            const bankAppUrl = process.env.NEXT_PUBLIC_BANK_APP_URL || 'http://localhost:3000';
+                            window.location.href = `${bankAppUrl}/payment?txn_id=${transactionData.txn_id}&amount=${transactionData.amount}`;
                         }
                     }}>
                         Add Money
