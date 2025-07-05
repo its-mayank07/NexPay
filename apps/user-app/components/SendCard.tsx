@@ -15,7 +15,7 @@ export function SendCard() {
   const [loading, setLoading] = useState(false);
 
   return (
-    <div className="min-h-[90vh] bg-slate-50 py-10 px-4">
+    <div className="min-h-[90vh] bg-slate-50 py-10 px-4 ">
       <Center>
         <div className="w-full max-w-xl bg-white shadow-lg rounded-2xl border border-slate-200 p-6">
           <Card title="Send Money">
@@ -23,12 +23,14 @@ export function SendCard() {
               <TextInput
                 placeholder="Enter recipient's number"
                 label="Recipient Number"
+                value={number}
                 onChange={(value) => setNumber(value)}
               />
 
               <TextInput
                 placeholder="Enter amount in INR"
                 label="Amount"
+                value={amount}
                 onChange={(value) => setAmount(value)}
               />
 

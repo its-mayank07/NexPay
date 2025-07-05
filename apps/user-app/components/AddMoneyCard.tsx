@@ -24,6 +24,7 @@ export const AddMoney = () => {
             <div style={{ width: "100%", maxWidth: 400, margin: "0 auto", padding: 24 }}>
                 <div style={{ marginBottom: 20 }}>
                     <TextInput
+                    value={amount.toString()}
                         label={"Amount"}
                         placeholder={"Amount"}
                         onChange={(value: string) => {

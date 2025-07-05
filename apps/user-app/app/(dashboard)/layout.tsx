@@ -1,5 +1,3 @@
-// app/(dashboard)/layout.tsx
-
 import { AppbarClient } from "../../components/AppbarClient";
 import { SidebarItem } from "../../components/SidebarItem";
 
@@ -26,7 +24,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   );
 }
 
-
 function HomeIcon() {
   return (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
@@ -34,6 +31,7 @@ function HomeIcon() {
     </svg>
   );
 }
+
 function TransferIcon() {
   return (
     <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">

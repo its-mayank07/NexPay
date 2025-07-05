@@ -40,34 +40,39 @@ app.post("/hdfcWebhook", async (req, res) => {
 
   try {
     await db.$transaction(async (tx) => {
-      // Lock the user's balance row
+      // Lock the user's balance
       await tx.$queryRaw`
         SELECT * FROM "Balance"
         WHERE "userId" = ${Number(paymentInformation.userId)}
         FOR UPDATE
       `;
 
-      // Update balance
-      await tx.balance.updateMany({
+      // ✅ Use upsert to create or update
+      await tx.balance.upsert({
         where: { userId: Number(paymentInformation.userId) },
-        data: {
+        update: {
           amount: {
             increment: Number(paymentInformation.amount),
           },
         },
+        create: {
+          userId: Number(paymentInformation.userId),
+          amount: Number(paymentInformation.amount),
+          locked: 0,
+        },
       });
 
-      // Mark transaction as success
-      await tx.onRampTransaction.updateMany({
-        where: { token: paymentInformation.token },
+      // ✅ Mark the transaction as Success
+      await tx.onRampTransaction.update({
+        where: { id: existingTx.id },
         data: { status: "Success" },
       });
     });
 
-    res.json({ message: "Captured" });
+    return res.json({ message: "Captured" });
   } catch (e) {
-    console.error(e);
-    res.status(411).json({
+    console.error("Webhook processing error:", e);
+    return res.status(500).json({
       message: "Error while processing webhook",
     });
   }

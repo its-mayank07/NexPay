@@ -33,6 +33,18 @@ export async function p2pTransfer(to: string, amount: number) {
         status: 400,
       };
     }
+    // Ensure balances exist
+    await prisma.balance.upsert({
+      where: { userId: Number(from) },
+      update: {},
+      create: { userId: Number(from), amount: 0, locked: 0 },
+    });
+
+    await prisma.balance.upsert({
+      where: { userId: toUser.id },
+      update: {},
+      create: { userId: toUser.id, amount: 0, locked: 0 },
+    });
 
     await prisma.$transaction(async (tx) => {
       await tx.$queryRaw`
@@ -44,8 +56,6 @@ export async function p2pTransfer(to: string, amount: number) {
       console.log("above");
       await new Promise((resolve) => setTimeout(resolve, 1000)); //  Simulate delay
       console.log("after");
-
-      
 
       const fromBalance = await tx.balance.findUnique({
         where: { userId: Number(from) },
@@ -65,15 +75,14 @@ export async function p2pTransfer(to: string, amount: number) {
         data: { amount: { increment: amount } },
       });
       await tx.p2pTransfer.create({
-        data : {
-            fromUserId : Number(from),
-            toUserId : toUser.id,
-            amount: amount,
-            timestamp : new Date()
-        }
-      })
+        data: {
+          fromUserId: Number(from),
+          toUserId: toUser.id,
+          amount: amount,
+          timestamp: new Date(),
+        },
+      });
     });
-
 
     return {
       message: "Transfer successful",

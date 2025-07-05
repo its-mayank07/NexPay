@@ -2,17 +2,15 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const error = searchParams.get("error");
-
   const { data: session, status } = useSession();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loginError, setLoginError] = useState(false);
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -23,6 +21,7 @@ export default function LoginPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setLoginError(false);
 
     const res = await signIn("credentials", {
       phone,
@@ -35,79 +34,82 @@ export default function LoginPage() {
     if (res?.ok) {
       router.push("/dashboard");
     } else {
-      alert("Invalid credentials. Please try again.");
+      setLoginError(true);
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left side - login form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center px-6 py-12 bg-white">
-        <div className="w-full max-w-md">
-          <h1 className="text-3xl font-bold text-slate-800 mb-6 text-center">Login</h1>
+    <div className="flex min-h-screen font-sans bg-gradient-to-r from-gray-100 to-gray-200">
+      {/* Left - Quote Card */}
+      <div className="hidden md:flex w-1/2 bg-indigo-600 items-center justify-center px-8">
+        <div className="bg-white/90 backdrop-blur-md shadow-2xl rounded-3xl p-10 max-w-md text-center">
+          <h2 className="text-4xl font-bold text-indigo-700 mb-6">Nexpay</h2>
+          <blockquote className="text-lg text-slate-700 italic leading-relaxed">
+            “Empowering people to manage their money is the first step toward freedom.”
+          </blockquote>
+        </div>
+      </div>
 
-          {error && (
-            <p className="text-red-500 text-sm text-center mb-4">
-              {error === "CredentialsSignin"
-                ? "Invalid phone or password"
-                : "Authentication failed"}
-            </p>
-          )}
+      {/* Right - Login Form */}
+      <div className="flex w-full md:w-1/2 items-center justify-center px-6">
+        <div className="w-full max-w-md bg-white p-10 rounded-2xl shadow-2xl">
+          <h2 className="text-3xl font-semibold text-slate-800 text-center mb-6">
+            Sign in to your account
+          </h2>
+
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-slate-600 mb-1">
+                Phone Number
+              </label>
               <input
                 type="text"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 required
-                className="w-full px-4 py-2 rounded-md border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                placeholder="enter your phone number"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-150 ease-in-out"
+                placeholder="Enter your phone number"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+              <label className="block text-sm font-medium text-slate-600 mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2 rounded-md border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-150 ease-in-out"
                 placeholder="Enter your password"
               />
             </div>
+              {loginError && (
+            <p className="text-red-500 text-sm text-center mb-4">
+              Invalid phone number or password.
+            </p>
+          )}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded-md font-medium transition"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition duration-150 ease-in-out"
             >
-              {loading ? "Logging..." : "Login"}
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
-          
+
           <p className="text-center text-sm text-slate-500 mt-6">
             Don’t have an account?{" "}
-            <span className="text-indigo-600 font-semibold">Sign in to create one</span>.
-          </p>
-        </div>
-      </div>
-
-      {/* Right side - image / branding */}
-      <div className="hidden lg:flex w-1/2 bg-indigo-600 items-center justify-center relative">
-        <div
-          className="absolute inset-0 bg-cover bg-center opacity-20"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1581090700227-1e8b6d1d9b89?auto=format&fit=crop&w=1280&q=80')",
-          }}
-        />
-        <div className="z-10 text-white text-center px-12">
-          <h2 className="text-4xl font-extrabold mb-4">The Cube Bank</h2>
-          <p className="text-lg font-medium">
-            Secure and modern banking built for the digital world.
+            <a
+              href="/signup"
+              className="text-indigo-600 font-medium hover:underline"
+            >
+              Create one
+            </a>
+            .
           </p>
         </div>
       </div>

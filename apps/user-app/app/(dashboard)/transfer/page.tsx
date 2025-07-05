@@ -44,28 +44,29 @@ export default async function TransferPage() {
       </div>
     );
   }
+  
   const balance = await getBalance();
   const transactions = await getOnRampTransactions();
 
   return (
-    <main className="min-h-screen w-full px-6 py-10 bg-slate-50">
+    <main className="min-h-screen w-full px-4 md:px-6 py-10 bg-slate-50">
       <h1 className="text-4xl font-bold text-slate-800 mb-10 text-center">
         Transfer
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
         {/* Left Column - Add Money */}
-        <div className="bg-white shadow-md rounded-xl border border-slate-200 p-6">
+        <div className="bg-white shadow-lg rounded-xl border border-slate-200 p-6 transition-transform duration-200 hover:shadow-xl">
           <AddMoney />
         </div>
 
         {/* Right Column - Balance + Transactions */}
         <div className="space-y-6">
-          <div className="bg-white shadow-md rounded-xl border border-slate-200 p-6">
+          <div className="bg-white shadow-lg rounded-xl border border-slate-200 p-6 transition-transform duration-200 hover:shadow-xl">
             <BalanceCard amount={balance.amount} locked={balance.locked} />
           </div>
 
-          <div className="bg-white shadow-md rounded-xl border border-slate-200 p-6">
+          <div className="bg-white shadow-lg rounded-xl border border-slate-200 p-6 transition-transform duration-200 hover:shadow-xl">
             <h2 className="text-lg font-semibold text-slate-700 mb-4">
               Recent Bank Transactions
             </h2>
