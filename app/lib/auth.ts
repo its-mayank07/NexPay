@@ -19,7 +19,6 @@ export const authOptions = {
           },
           
           async authorize(credentials: Credentials | undefined) {
-            // Check if credentials are provided
             if (!credentials || !credentials.phone || !credentials.password) {
                 return null;
             }
