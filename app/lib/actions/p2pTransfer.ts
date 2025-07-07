@@ -8,10 +8,10 @@ import type { Prisma } from "@prisma/client";
 export async function p2pTransfer(to: string, amount: number) {
   try {
     const session = await getServerSession(authOptions);
-    // Use email as unique identifier since 'id' is not present on session.user
-    const fromUserEmail = session?.user?.email;
+  // number is stored in email field
+    const fromUserNumber = session?.user?.email;
 
-    if (!fromUserEmail) {
+    if (!fromUserNumber) {
       return {
         message: "Authentication required",
         status: 401,
@@ -32,7 +32,7 @@ export async function p2pTransfer(to: string, amount: number) {
 
     // Find sender by email
     const fromUser = await prisma.user.findUnique({
-      where: { email: fromUserEmail },
+      where: { number: fromUserNumber },
     });
 
     if (!fromUser) {
