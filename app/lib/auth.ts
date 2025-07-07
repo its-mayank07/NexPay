@@ -1,6 +1,13 @@
 import db from "./db";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt";
+import type { Session, User } from "next-auth";
+import type { JWT } from "next-auth/jwt";
+
+interface Credentials {
+  phone: string;
+  password: string;
+}
 
 export const authOptions = {
     providers: [
@@ -11,7 +18,7 @@ export const authOptions = {
             password: { label: "Password", type: "password", required: true }
           },
           
-          async authorize(credentials: any) {
+          async authorize(credentials: Credentials | undefined) {
             // Check if credentials are provided
             if (!credentials || !credentials.phone || !credentials.password) {
                 return null;
@@ -45,11 +52,12 @@ export const authOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
        
-        async session({ token, session }: any) {
-            if(session.user)
-            session.user.id = token.sub
-
-            return session
+        async session({ token, session }: { token: JWT; session: Session }) {
+            if (session.user && token.sub) {
+                // Extend the user object to include id
+                (session.user as typeof session.user & { id?: string }).id = token.sub;
+            }
+            return session;
         }
     }
   }

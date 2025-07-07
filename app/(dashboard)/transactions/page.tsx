@@ -3,15 +3,23 @@ import AllTransactions from "@/components/AllTransactions";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/app/lib/db";
 
-async function getOnRampTransactions() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return [];
+type OnRampTransaction = {
+  time: Date;
+  amount: number;
+  status: string;
+  provider: string;
+};
 
-  const txns = await prisma.onRampTransaction.findMany({
-    where: { userId: Number(session.user.id) },
-  });
+type P2PTransaction = {
+  from: string;
+  to: string;
+  amount: number;
+  time: Date;
+};
 
-  return txns.map((t: any) => ({
+async function getOnRampTransactions(userId: number): Promise<OnRampTransaction[]> {
+  const txns = await prisma.onRampTransaction.findMany({ where: { userId } });
+  return txns.map((t): OnRampTransaction => ({
     time: t.startTime,
     amount: t.amount,
     status: t.status,
@@ -19,28 +27,21 @@ async function getOnRampTransactions() {
   }));
 }
 
-async function getP2PTransactions() {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id) return [];
-
+async function getP2PTransactions(userId: number): Promise<P2PTransaction[]> {
   const p2pTxns = await prisma.p2pTransfer.findMany({
     where: {
-      OR: [
-        { fromUserId: Number(session.user.id) },
-        { toUserId: Number(session.user.id) },
-      ],
+      OR: [{ fromUserId: userId }, { toUserId: userId }],
     },
     include: {
       fromUser: { select: { name: true, number: true } },
       toUser: { select: { name: true, number: true } },
     },
   });
-
-  return p2pTxns.map((t: any) => ({
-    time: t.timestamp,
+  return p2pTxns.map((t): P2PTransaction => ({
+    from: t.fromUser.name || "" ,
+    to: t.toUser.name || "",
     amount: t.amount,
-    from: t.fromUser.name || t.fromUser.number,
-    to: t.toUser.name || t.toUser.number,
+    time: t.timestamp,
   }));
 }
 
@@ -57,8 +58,21 @@ export default async function TransactionsPage() {
     );
   }
 
-  const Ramptransactions = await getOnRampTransactions();
-  const P2Ptransactions = await getP2PTransactions();
+  // Safely extract user id, handling possible undefined
+  const userId = session.user && "id" in session.user ? Number((session.user as any).id) : undefined;
+
+  if (!userId || isNaN(userId)) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <p className="text-gray-300 text-lg font-medium">
+          User information is incomplete. Please sign in again.
+        </p>
+      </div>
+    );
+  }
+
+  const Ramptransactions = await getOnRampTransactions(userId);
+  const P2Ptransactions = await getP2PTransactions(userId);
 
   return (
     <main className="min-h-screen bg-black px-3 sm:px-6 py-4 sm:py-8 overflow-x-hidden relative">

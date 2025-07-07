@@ -3,6 +3,19 @@ import { authOptions } from "../../lib/auth";
 import prisma from "@/app/lib/db";
 import { DashboardQuickActions } from "@/components/DashboardQuickActions";
 
+type OnRampTransaction = {
+  time: Date;
+  amount: number;
+  status: string;
+  provider: string;
+};
+
+type P2PTransaction = {
+  from: string;
+  to: string;
+  amount: number;
+  time: Date;
+};
 
 async function getBalance(userId: number) {
   try {
@@ -20,10 +33,10 @@ async function getBalance(userId: number) {
   }
 }
 
-async function getOnRampTransactions(userId: number) {
+async function getOnRampTransactions(userId: number): Promise<OnRampTransaction[]> {
   try {
     const txns = await prisma.onRampTransaction.findMany({ where: { userId } });
-    return txns.map((t: any) => ({
+    return txns.map((t): OnRampTransaction => ({
       time: t.startTime,
       amount: t.amount,
       status: t.status,
@@ -35,7 +48,7 @@ async function getOnRampTransactions(userId: number) {
   }
 }
 
-async function getP2PTransactions(userId: number) {
+async function getP2PTransactions(userId: number): Promise<P2PTransaction[]> {
   try {
     const txns = await prisma.p2pTransfer.findMany({
       where: {
@@ -47,9 +60,9 @@ async function getP2PTransactions(userId: number) {
       },
     });
 
-    return txns.map((t:any) => ({
-      from: t.fromUser.name,
-      to: t.toUser.name,
+    return txns.map((t): P2PTransaction => ({
+      from: t.fromUser.name || "",
+      to: t.toUser.name || "",
       amount: t.amount,
       time: t.timestamp,
     }));
@@ -74,8 +87,8 @@ export default async function DashboardPage() {
   const onRampTransactions = await getOnRampTransactions(userId);
   const p2pTransactions = await getP2PTransactions(userId);
 
-  onRampTransactions.sort((a: any, b: any) => b.time.getTime() - a.time.getTime());
-  p2pTransactions.sort((a: any, b: any) => b.time.getTime() - a.time.getTime());
+  onRampTransactions.sort((a: OnRampTransaction, b: OnRampTransaction) => b.time.getTime() - a.time.getTime());
+  p2pTransactions.sort((a: P2PTransaction, b: P2PTransaction) => b.time.getTime() - a.time.getTime());
 
   return (
     <main className="min-h-screen bg-black px-3 sm:px-6 py-2 sm:py-6 overflow-x-hidden relative">
@@ -93,7 +106,7 @@ export default async function DashboardPage() {
             Welcome, {(session.user.name?.charAt(0).toUpperCase() + session.user.name?.slice(1)) || "User"}
           </h1>
           <p className="text-gray-400 text-xs sm:text-base">
-            Here's your financial overview
+            Here&apos;s your financial overview
           </p>
         </div>
 
@@ -153,7 +166,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-1.5 sm:space-y-3">
-                {onRampTransactions.slice(0, 3).map((txn: any, i: number) => (
+                {onRampTransactions.slice(0, 3).map((txn: OnRampTransaction, i: number) => (
                   <div key={i} className="bg-gradient-to-r from-gray-800/60 to-gray-700/60 backdrop-blur-sm rounded-lg sm:rounded-xl p-2.5 sm:p-4 border border-gray-500/40 shadow-[0_8px_16px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.4)] hover:bg-gradient-to-r hover:from-gray-700/60 hover:to-gray-600/60 transition-all duration-300 transform hover:scale-[1.02]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
@@ -203,7 +216,7 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-1.5 sm:space-y-3">
-                {p2pTransactions.slice(0, 3).map((txn: any, i: number) => (
+                {p2pTransactions.slice(0, 3).map((txn: P2PTransaction, i: number) => (
                   <div key={i} className="bg-gradient-to-r from-gray-800/60 to-gray-700/60 backdrop-blur-sm rounded-lg sm:rounded-xl p-2.5 sm:p-4 border border-gray-500/40 shadow-[0_8px_16px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.4)] hover:bg-gradient-to-r hover:from-gray-700/60 hover:to-gray-600/60 transition-all duration-300 transform hover:scale-[1.02]">
                     <div className="flex justify-between items-start">
                       <div className="flex-1">
