@@ -72,9 +72,13 @@ async function getP2PTransactions(userId: number): Promise<P2PTransaction[]> {
   }
 }
 
+function hasId(user: unknown): user is { id: string } {
+  return typeof user === 'object' && user !== null && typeof (user as { id?: unknown }).id === 'string';
+}
+
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
-  if (!session) {
+  if (!session || !session.user || !hasId(session.user)) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-black">
         <p className="text-gray-300 text-lg">Please sign in to access this page.</p>
@@ -103,7 +107,7 @@ export default async function DashboardPage() {
         {/* Welcome Header */}
         <div className="mb-3 sm:mb-6">
           <h1 className="text-lg sm:text-3xl font-bold text-white mb-1 sm:mb-2 drop-shadow-lg">
-            Welcome, {(session.user.name?.charAt(0).toUpperCase() + session.user.name?.slice(1)) || "User"}
+            Welcome, {session.user && session.user.name ? (session.user.name.charAt(0).toUpperCase() + session.user.name.slice(1)) : "User"}
           </h1>
           <p className="text-gray-400 text-xs sm:text-base">
             Here&apos;s your financial overview

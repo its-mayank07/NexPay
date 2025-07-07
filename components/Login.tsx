@@ -7,7 +7,7 @@ import Quote from "@/components/Quote";
 
 export default function Login() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -17,7 +17,7 @@ export default function Login() {
     if (status === "authenticated") {
       router.push("/dashboard");
     }
-  }, [status]);
+  }, [status, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,7 +121,7 @@ export default function Login() {
           </form>
 
           <div className="mt-6 text-center text-indigo-200 text-sm">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <a href="/signup" className="text-indigo-100 hover:text-white font-medium transition-colors duration-200">
               Create one
             </a>

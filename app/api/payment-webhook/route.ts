@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/lib/db";
+import type { Prisma } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
   try {
@@ -45,7 +46,7 @@ export async function POST(req: NextRequest) {
     const userId = existingTx.userId;
 
 
-    await prisma.$transaction(async (tx:any) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Lock the balance row
       await tx.$queryRaw`
         SELECT * FROM "Balance"

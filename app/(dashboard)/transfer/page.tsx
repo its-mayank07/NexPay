@@ -1,4 +1,3 @@
-
 import { AddMoney } from "@/components/AddMoneyCard";
 import { BalanceCard } from "@/components/BalanceCard";
 import { OnRampTransactions } from "@/components/OnRampTransactions";
@@ -6,13 +5,27 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/app/lib/db";
 
+type OnRampTransaction = {
+  time: Date;
+  amount: number;
+  status: string;
+  provider: string;
+};
+
+function hasId(user: unknown): user is { id: string } {
+  return typeof user === 'object' && user !== null && typeof (user as { id?: unknown }).id === 'string';
+}
+
 async function getBalance() {
   const session = await getServerSession(authOptions);
-  const balance = await prisma.balance.findFirst({
-    where: {
-      userId: Number(session?.user?.id),
-    },
-  });
+  const userId = session?.user && hasId(session.user) ? Number(session.user.id) : undefined;
+  const balance = userId
+    ? await prisma.balance.findFirst({
+        where: {
+          userId,
+        },
+      })
+    : null;
 
   return {
     amount: balance?.amount || 0,
@@ -22,13 +35,16 @@ async function getBalance() {
 
 async function getOnRampTransactions() {
   const session = await getServerSession(authOptions);
+  if (!session?.user || !hasId(session.user)) {
+    return [];
+  }
   const txns = await prisma.onRampTransaction.findMany({
     where: {
-      userId: Number(session?.user?.id),
+      userId: Number(session.user.id),
     },
   });
 
-  return txns.map((t: any) => ({
+  return txns.map((t): OnRampTransaction => ({
     time: t.startTime,
     amount: t.amount,
     status: t.status,

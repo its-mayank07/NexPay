@@ -23,7 +23,6 @@ const SUPPORTED_BANKS = [
   
 
 export const AddMoney = () => {
-    const [redirectUrl, setRedirectUrl] = useState(SUPPORTED_BANKS[0]?.redirectUrl);
     const [amount, setAmount] = useState(0);
     const [provider, setProvider] = useState(SUPPORTED_BANKS[0]?.name || "");
     const [error, setError] = useState("");
@@ -69,7 +68,6 @@ export const AddMoney = () => {
                     <div className="bg-gradient-to-r from-gray-800/60 to-gray-700/60 backdrop-blur-sm rounded-xl border border-gray-500/40 p-2 sm:p-3">
                         <Select 
                             onSelect={(value) => {
-                                setRedirectUrl(SUPPORTED_BANKS.find(x => x.name === value)?.redirectUrl || "");
                                 setProvider(SUPPORTED_BANKS.find(x => x.name === value)?.name || "");
                             }} 
                             options={SUPPORTED_BANKS.map(x => ({

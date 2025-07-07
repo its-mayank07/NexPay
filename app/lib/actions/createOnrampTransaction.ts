@@ -4,11 +4,14 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../auth";
 import prisma from "../db";
 
+function hasId(user: unknown): user is { id: string } {
+  return typeof user === 'object' && user !== null && typeof (user as { id?: unknown }).id === 'string';
+}
 
 async function createOnrampTransaction(amount : number,provider : string) {
     const session = await getServerSession(authOptions);
 
-    if (!session?.user || !session.user?.id) {
+    if (!session?.user || !hasId(session.user)) {
         return {
             message: "Unauthenticated request"
         }

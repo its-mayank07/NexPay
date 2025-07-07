@@ -45,6 +45,11 @@ async function getP2PTransactions(userId: number): Promise<P2PTransaction[]> {
   }));
 }
 
+// Add a type guard for session.user.id
+function hasId(user: unknown): user is { id: string } {
+  return typeof user === 'object' && user !== null && Object.prototype.hasOwnProperty.call(user, 'id') && typeof (user as { id: unknown }).id === 'string';
+}
+
 export default async function TransactionsPage() {
   const session = await getServerSession(authOptions);
 
@@ -59,7 +64,7 @@ export default async function TransactionsPage() {
   }
 
   // Safely extract user id, handling possible undefined
-  const userId = session.user && "id" in session.user ? Number((session.user as any).id) : undefined;
+  const userId = session.user && hasId(session.user) ? Number(session.user.id) : undefined;
 
   if (!userId || isNaN(userId)) {
     return (
