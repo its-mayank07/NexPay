@@ -2,24 +2,11 @@ import { getServerSession } from "next-auth";
 import AllTransactions from "@/components/AllTransactions";
 import { authOptions } from "@/app/lib/auth";
 import prisma from "@/app/lib/db";
+import { RampTransaction, P2PTransaction } from "@/app/types/transac";
 
-type OnRampTransaction = {
-  time: Date;
-  amount: number;
-  status: string;
-  provider: string;
-};
-
-type P2PTransaction = {
-  from: string;
-  to: string;
-  amount: number;
-  time: Date;
-};
-
-async function getOnRampTransactions(userId: number): Promise<OnRampTransaction[]> {
+async function getOnRampTransactions(userId: number): Promise<RampTransaction[]> {
   const txns = await prisma.onRampTransaction.findMany({ where: { userId } });
-  return txns.map((t): OnRampTransaction => ({
+  return txns.map((t): RampTransaction => ({
     time: t.startTime,
     amount: t.amount,
     status: t.status,
@@ -42,6 +29,7 @@ async function getP2PTransactions(userId: number): Promise<P2PTransaction[]> {
     to: t.toUser.name || "",
     amount: t.amount,
     time: t.timestamp,
+    fromUserNumber: t.fromUser.number,
   }));
 }
 

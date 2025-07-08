@@ -2,20 +2,10 @@
 
 import { OnRampTransactions } from "./OnRampTransactions";
 import { P2Ptransac } from "./P2Ptransac";
+import { RampTransaction, P2PTransaction } from "@/app/types/transac";
 
-interface RampTransaction {
-  time: Date;
-  amount: number;
-  status: string;
-  provider: string;
-}
 
-interface P2PTransaction {
-  time: Date;
-  amount: number;
-  from: string;
-  to: string;
-}
+
 
 interface AllTransactionsProps {
   Ramptransactions: RampTransaction[];

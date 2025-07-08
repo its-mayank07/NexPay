@@ -4,9 +4,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { TextInput } from "@/components/ui/TextInput";
 import { p2pTransfer } from "../app/lib/actions/p2pTransfer";
+import { useSearchParams } from "next/navigation";
 
 export function SendCard() {
-  const [number, setNumber] = useState("");
+  const searchParams = useSearchParams();
+  const RecipientNumber = searchParams.get("sendto") || "";
+  const [number, setNumber] = useState(RecipientNumber);
   const [amount, setAmount] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -29,6 +32,7 @@ export function SendCard() {
             placeholder="Enter recipient's number"
             label="Recipient Number"
             value={number}
+            
             onChange={(value) => setNumber(value)}
           />
         </div>

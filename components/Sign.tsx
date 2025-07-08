@@ -79,16 +79,6 @@ export default function Sign() {
       {/* Right Side - Signup Form */}
       <div className="flex-1 flex items-center justify-center px-2 sm:px-6 py-8 sm:py-12 bg-black relative z-10">
         <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden text-center mb-6 sm:mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-xl flex items-center justify-center mb-4 mx-auto shadow-xl shadow-indigo-900/10 backdrop-blur-sm border border-white/10">
-              <svg className="w-8 h-8 text-indigo-800" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.707l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13a1 1 0 102 0V9.414l1.293 1.293a1 1 0 001.414-1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <h1 className="text-2xl font-bold text-indigo-100 drop-shadow-lg">NexPay</h1>
-          </div>
-
           <div className="bg-white/5 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 border border-white/10 shadow-2xl shadow-indigo-900/20">
             <div className="text-center mb-6 sm:mb-8">
               <h1 className="text-2xl sm:text-3xl font-bold text-indigo-100 mb-2 drop-shadow-sm">Get Started</h1>

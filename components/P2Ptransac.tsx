@@ -1,19 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-interface P2PTransaction {
-  time: Date;
-  amount: number;
-  from: string;
-  to: string;
-}
+import { P2PTransaction } from "@/app/types/transac";
+import { useRouter } from "next/navigation";
 
 interface P2PTransactionsProps {
   transactions: P2PTransaction[];
 }
 
 export function P2Ptransac({ transactions }: P2PTransactionsProps) {
+  const router = useRouter();
   if (!transactions.length) {
     return (
       <div className="text-center py-6 sm:py-8">
@@ -39,7 +35,7 @@ export function P2Ptransac({ transactions }: P2PTransactionsProps) {
           transition={{ delay: idx * 0.05, duration: 0.3 }}
           className="bg-gradient-to-r from-gray-800/60 to-gray-700/60 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-gray-500/40 shadow-[0_8px_16px_rgba(0,0,0,0.3)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.4)] hover:bg-gradient-to-r hover:from-gray-700/60 hover:to-gray-600/60 transition-all duration-300 transform hover:scale-[1.02]"
         >
-          <div className="flex justify-between items-start">
+          <div onClick={() => router.push(`/p2ptransfer?sendto=${t.fromUserNumber}`)} className="flex justify-between items-start cursor-pointer ">
             <div className="flex-1">
               <div className="text-xs sm:text-sm font-medium text-gray-200">
                 {t.from} → {t.to}
