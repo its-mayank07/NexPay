@@ -20,7 +20,7 @@ A modern, full-stack wallet app for the future.
 
 1. **Clone the repo:**
    ```sh
-   git clone <your-repo-url>
+   git clone https://github.com/its-mayank07/NexPay.git
    cd nex
    ```
 2. **Install dependencies:**
